@@ -6,12 +6,13 @@ ruby '2.5.1'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.1'
 # Use postgresql as the database for Active Record
-
+gem 'pg', '>= 0.18', '< 2.0'
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 gem 'slim-rails'
+gem 'slim'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
@@ -43,9 +44,9 @@ group :development, :test do
   gem 'capybara'
   gem 'capybara-selenium'
   gem 'chromedriver-helper'
-  gem 'pg', '>= 0.18', '< 2.0'
   gem 'rack-test'
   gem 'rspec-rails'
+  gem 'factory_bot_rails'
 end
 
 group :development do
