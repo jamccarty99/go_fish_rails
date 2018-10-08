@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-  get 'static_pages/login'
-  get 'static_pages/main'
-  get 'static_pages/settings'
-  get 'static_pages/size'
-  get 'static_pages/rule'
-  get 'static_pages/game'
+  # get '/login', to: 'static_pages#login'
+  get '/main', to: 'static_pages#main'
+  get '/settings', to: 'static_pages#settings'
+  get '/size', to: 'static_pages#size'
+  get '/rule', to: 'static_pages#rule'
+  get '/game', to: 'static_pages#game'
   get 'users/new'
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  root'application#hello'
+  resources :users
+  root'static_pages#login'
 end

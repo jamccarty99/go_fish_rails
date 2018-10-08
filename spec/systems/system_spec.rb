@@ -9,8 +9,8 @@ RSpec.describe 'Sign Up', type: :system do
     visit '/'
 
     expect {
-      fill_in 'Name', with: 'Caleb'
-      click_on 'Play'
+      fill_in :username, with: 'Caleb'
+      click_on 'Login'
     }.to change(User, :count).by(1)
 
     expect(page).to have_content 'Pending Games'
@@ -22,7 +22,7 @@ RSpec.describe 'Sign Up', type: :system do
 
     expect {
       fill_in 'Name', with: 'Caleb'
-      click_on 'Play'
+      click_on 'Login'
     }.not_to change(User, :count)
 
     expect(page).to have_content 'Pending Games'
@@ -32,7 +32,7 @@ RSpec.describe 'Sign Up', type: :system do
     visit '/'
 
     # don't fill in name
-    click_on 'Play'
+    click_on 'Login'
 
     expect(page).to have_content 'error'
   end
