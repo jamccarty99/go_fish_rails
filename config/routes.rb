@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   get '/size', to: 'static_pages#size'
   get '/rule', to: 'static_pages#rule'
   get '/game', to: 'static_pages#game'
-  get 'users/new'
+  get  '/signup',  to: 'users#new'
+  post '/signup',  to: 'users#create'
   resources :users
   root'static_pages#login'
 end

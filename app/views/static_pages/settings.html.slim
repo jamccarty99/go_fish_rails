@@ -1,10 +1,10 @@
 .container.flex_column
   .navigation__container.flex_row
     a.navigation__item.navigation__item--back href="#"
-      img alt=("chevron_left icon") src="assets/back_arrow.png"
+      = image_tag "back_arrow.png", alt: "chevron_left icon" 
     h1.navigation__title Settings
     a.navigation__item.navigation__item--settings href="/settings"
-      img alt=("settings icon") src="assets/settings_icon_small.png"
+      = image_tag "settings_icon_small.png", alt: "settings icon"
   .settings__container
     button.settings__button--quit type="button"
       a href="#"  Quit Current Game

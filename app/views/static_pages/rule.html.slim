@@ -1,11 +1,11 @@
 body.reverse
   .container.flex_column
     .navigation__container.flex_row
-      a.navigation__item.navigation__item--back href="/"
-        img alt=("blue back arrow icon") src="assets/blue_back_arrow.png"
+      a.navigation__item.navigation__item--back href="/main"
+        = image_tag "back_arrow.png", alt: "chevron_left icon"
       h1.navigation__title How to Play
       a.navigation__item.navigation__item--settings href="/settings"
-        img alt=("blue settings icon") src="assets/blue_settings_icon.png"
+        = image_tag "settings_icon_small.png", alt: "settings icon"
     .settings__container
       h1 OBJECT OF THE GAME
       p
