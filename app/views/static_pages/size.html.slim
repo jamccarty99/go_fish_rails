@@ -1,0 +1,11 @@
+.container
+  .navigation__container.flex_row
+    a.navigation__item.navigation__item--back href="/main"
+      = image_tag "back_arrow.png", alt: "chevron_left icon"
+    a.navigation__item.navigation__item--settings href="/settings"
+      = image_tag "settings_icon_small.png", alt: "settings icon"
+  form.main_menu__container.flex_column action="/waiting" method="POST"
+    button.menu__buttons type="submit" name="size" value="2" 2 Player
+    button.menu__buttons type="submit" name="size" value="3" 3 Player
+    button.menu__buttons type="submit" name="size" value="4" 4 Player
+    button.menu__buttons type="submit" name="size" value="5" 5 Player
