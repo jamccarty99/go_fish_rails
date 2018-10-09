@@ -2,12 +2,14 @@ require 'rails_helper'
 
 RSpec.describe StaticPagesController, type: :controller do
 
-  describe "GET #login" do
-    it "returns http success" do
-      get :login
-      expect(response).to have_http_status(:success)
-    end
-  end
+  # before do
+  #   driven_by(:rack_test)
+  #   existing_user = User.create(name: 'Frank Sinatra', password: 'franky', password_confirmation: 'franky')
+  #   visit '/'
+  #   fill_in 'Name', with: 'Frank Sinatra'
+  #   fill_in 'Password', with: 'franky'
+  #   click_on 'Log in'
+  # end
 
   describe "GET #main" do
     it "returns http success" do

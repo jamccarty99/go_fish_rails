@@ -1,7 +1,5 @@
 class StaticPagesController < ApplicationController
-  def login
-  end
-
+  skip_before_action :require_authentication
   def main
   end
 

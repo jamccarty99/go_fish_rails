@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  skip_before_action :require_authentication, only: [:new, :create]
+
   def show
     @user = User.find(params[:id])
   end
@@ -8,11 +10,15 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)    # Not the final implementation!
+    @user = User.new(user_params)
     if @user.save
-      redirect_to @user
+      session[:current_user] = @user.id
+      flash[:success] = "Welcome to the Go Fish!"
+      redirect_to main_path, notice: 'Logged in successfully'
     else
-      render 'new'
+      flash[:danger] = 'Please correctly fill in the fields' # Not quite right!
+      # flash[:danger] = 'Invalid name/password combination' # Not quite right!
+      render :new
     end
   end
 
