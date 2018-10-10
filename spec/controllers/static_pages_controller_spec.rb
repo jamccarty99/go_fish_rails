@@ -11,20 +11,6 @@ RSpec.describe StaticPagesController, type: :controller do
   #   click_on 'Log in'
   # end
 
-  describe "GET #main" do
-    it "returns http success" do
-      get :main
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET #settings" do
-    it "returns http success" do
-      get :settings
-      expect(response).to have_http_status(:success)
-    end
-  end
-
   describe "GET #size" do
     it "returns http success" do
       get :size

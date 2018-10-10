@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 
   def require_authentication
     unless session[:current_user] && current_user
-      redirect_to new_session_path, notice: 'Login to continue'
+      redirect_to new_session_path, notice: 'Log in to continue'
     end
   end
 

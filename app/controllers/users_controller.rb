@@ -9,12 +9,16 @@ class UsersController < ApplicationController
     @user = User.new
   end
 
+  def index
+  end
+  
   def create
     @user = User.new(user_params)
+    # byebug
     if @user.save
       session[:current_user] = @user.id
       flash[:success] = "Welcome to the Go Fish!"
-      redirect_to main_path, notice: 'Logged in successfully'
+      redirect_to sessions_path, notice: 'Logged in successfully'
     else
       flash[:danger] = 'Please correctly fill in the fields' # Not quite right!
       # flash[:danger] = 'Invalid name/password combination' # Not quite right!

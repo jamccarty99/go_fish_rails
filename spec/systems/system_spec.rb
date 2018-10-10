@@ -73,11 +73,22 @@ RSpec.describe 'Sign Up', type: :system do
       click_on 'How to Play'
       expect(page).to have_content 'OBJECT OF THE GAME'
     end
-    
-    xit 'allows a user to log out' do
+
+    it 'allows a user to log out' do
       click_on 'Log Out'
-      expect(page).to have_content 'You have successfully logged out'
+      expect(page).to have_content 'Log Out Successful'
+      visit '/sessions'
+      expect(page).to have_content 'Log in to continue'
     end
 
+    it 'allows a user to go "back" one page' do
+      click_on 'chevron_left icon'
+      expect(page).to have_content 'Go Fish!'
+    end
+
+    it 'allows a user to access the settings page' do
+      click_on 'settings icon'
+      expect(page).to have_content 'Settings'
+    end
   end
 end

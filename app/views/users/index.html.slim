@@ -1,10 +1,8 @@
 .container.flex_column
   .navigation__container.flex_row
-    a.navigation__item.navigation__item--back href="#"
-      = image_tag "back_arrow.png", alt: "chevron_left icon" 
+    = link_to(image_tag("back_arrow.png", alt: "chevron_left icon"), sessions_path, method: 'get', class: 'navigation__item.navigation__item--back')
     h1.navigation__title Settings
-    a.navigation__item.navigation__item--settings href="/settings"
-      = image_tag "settings_icon_small.png", alt: "settings icon"
+    = link_to(image_tag("settings_icon_small.png", alt: "settings icon"), users_path, method: 'get', class: 'navigation__item.navigation__item--settings')
   .settings__container
     button.settings__button--quit type="button"
       a href="#"  Quit Current Game

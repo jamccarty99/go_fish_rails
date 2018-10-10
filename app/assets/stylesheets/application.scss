@@ -114,6 +114,10 @@ body {
    border-radius: 4px;
  }
 
+ .menu__buttons:hover {
+   cursor: pointer;
+ }
+ 
  .menu__buttons {
    text-align: center;
    width: 300px;

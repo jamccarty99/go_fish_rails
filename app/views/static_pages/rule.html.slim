@@ -1,11 +1,9 @@
 body.reverse
   .container.flex_column
     .navigation__container.flex_row
-      a.navigation__item.navigation__item--back href="/main"
-        = image_tag "blue_back_arrow.png", alt: "chevron_left icon"
+      = link_to(image_tag("blue_back_arrow.png", alt: "chevron_left icon"), sessions_path, method: 'get', class: 'navigation__item.navigation__item--back')
       h1.navigation__title How to Play
-      a.navigation__item.navigation__item--settings href="/settings"
-        = image_tag "blue_settings_icon.png", alt: "settings icon"
+      = link_to(image_tag("blue_settings_icon.png", alt: "settings icon"), users_path, method: 'get', class: 'navigation__item.navigation__item--settings')
     .settings__container
       h1 OBJECT OF THE GAME
       p
