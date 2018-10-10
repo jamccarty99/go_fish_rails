@@ -1,11 +1,18 @@
 class GamesController < ApplicationController
-  skip_before_action :require_authentication
+  # skip_before_action :require_authentication
   def show
-    # if @game && @game.
-    # else
-    #   redirect_to '/waiting'
+
   end
 
   def index
   end
+
+  def create
+    # @game = Game.new()
+    # if @game && @game.game_size = full
+    #   redirect_to '/show', notice: 'Your game is starting...'
+    # else
+    #   redirect_to '/waiting'
+  end
+
 end
