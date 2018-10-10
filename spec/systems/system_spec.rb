@@ -82,12 +82,12 @@ RSpec.describe 'Sign Up', type: :system do
     end
 
     it 'allows a user to go "back" one page' do
-      click_on 'chevron_left icon'
+      find('.navigation__item--back').click
       expect(page).to have_content 'Go Fish!'
     end
 
     it 'allows a user to access the settings page' do
-      click_on 'settings icon'
+      find('.navigation__item--settings').click
       expect(page).to have_content 'Settings'
     end
   end

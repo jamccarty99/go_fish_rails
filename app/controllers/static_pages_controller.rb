@@ -1,10 +1,5 @@
 class StaticPagesController < ApplicationController
   skip_before_action :require_authentication
-  def main
-  end
-
-  def settings
-  end
 
   def size
   end
@@ -13,5 +8,8 @@ class StaticPagesController < ApplicationController
   end
 
   def game
+  end
+
+  def waiting
   end
 end

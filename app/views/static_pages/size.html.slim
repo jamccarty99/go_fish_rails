@@ -1,9 +1,8 @@
-.container
+.container.flex_column
   .navigation__container.flex_row
-    a.navigation__item.navigation__item--back href="/main"
-      = image_tag "back_arrow.png", alt: "chevron_left icon"
-    = link_to(image_tag("settings_icon_small.png", alt: "settings icon"), users_path, method: 'get', class: 'navigation__item.navigation__item--settings')
-  form.main_menu__container.flex_column action="/waiting" method="POST"
+    = link_to(image_tag("back_arrow.png", alt: "chevron_left icon"), sessions_path, method: 'delete', class: 'navigation__item navigation__item--back')
+    = link_to(image_tag("settings_icon_small.png", alt: "settings icon"), users_path, method: 'get', class: 'navigation__item navigation__item--settings')
+  form.main_menu__container.flex_column action="/waiting" method="get"
     button.menu__buttons type="submit" name="size" value="2" 2 Player
     button.menu__buttons type="submit" name="size" value="3" 3 Player
     button.menu__buttons type="submit" name="size" value="4" 4 Player
