@@ -2,18 +2,9 @@ require 'rails_helper'
 
 RSpec.describe StaticPagesController, type: :controller do
 
-  # before do
-  #   driven_by(:rack_test)
-  #   existing_user = User.create(name: 'Frank Sinatra', password: 'franky', password_confirmation: 'franky')
-  #   visit '/'
-  #   fill_in 'Name', with: 'Frank Sinatra'
-  #   fill_in 'Password', with: 'franky'
-  #   click_on 'Log in'
-  # end
-
-  describe "GET #size" do
+  describe "GET #game_size" do
     it "returns http success" do
-      get :size
+      get :game_size
       expect(response).to have_http_status(:success)
     end
   end
@@ -25,11 +16,11 @@ RSpec.describe StaticPagesController, type: :controller do
     end
   end
 
-  describe "GET #game" do
-    it "returns http success" do
-      get :game
-      expect(response).to have_http_status(:success)
-    end
-  end
+  # describe "GET #game" do
+  #   it "returns http success" do
+  #     get :game
+  #     expect(response).to have_http_status(:success)
+  #   end
+  # end
 
 end

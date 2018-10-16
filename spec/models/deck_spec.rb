@@ -1,15 +1,12 @@
 require "rails_helper"
 
-RSpec.describe 'CardDeck' do
+RSpec.describe 'CardDeck', type: :model do
   let(:deck) { Deck.new }
-  let(:ace_spades) { PlayingCard.new('Ace', 'Spades') }
-  let(:queen_spades) { PlayingCard.new('Queen', 'Spades') }
-  let(:four_hearts) { PlayingCard.new('4', 'Hearts') }
   let(:deck_of_2) { [PlayingCard.new('Queen', 'Spades'), PlayingCard.new('4', 'Spades')] }
 
-  describe 'start' do
+  describe 'create_deck' do
     it 'Should have 52 cards when started' do
-      test = deck.start
+      test = Deck.create_deck
       expect(deck.cards_left(test)).to eq 52
     end
   end
@@ -30,8 +27,22 @@ RSpec.describe 'CardDeck' do
 
   describe 'shuffle!' do
     it 'Should shuffle the deck of cards' do
-      expect(deck.start).to_not be_nil
+      expect(Deck.create_deck).to_not be_nil
       expect(deck.shuffled_deck).to_not eq deck.ordered_deck
+    end
+  end
+
+  describe 'json conversion' do
+    let(:deck) { Deck.new }
+    let(:deck_json) { deck.as_json }
+    let(:expanded_deck) { Deck.from_json(deck_json) }
+
+    it 'returns a json object of deck' do
+      expect(deck_json).to be_a Hash
+    end
+
+    it 'changes the json deck object back into a deck' do
+      expect(expanded_deck).to be_an_instance_of Deck
     end
   end
 end

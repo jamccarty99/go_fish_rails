@@ -1,17 +1,23 @@
 require "rails_helper"
 
-RSpec.describe 'Games', type: :system do
-  before do
-    driven_by(:rack_test)
+RSpec.describe Game, type: :model do
+  describe '.pending' do
+    it 'returns games not yet started' do
+      done_game = create(:game, :finished)
+      in_progress = create(:game, :started)
+      pending = create(:game)
+
+      expect(Game.pending).to eq [ pending ]
+    end
   end
 
-  it 'requires authentication' do
-    visit '/games'
+  describe '.in_progress' do
+    it 'returns cames still in progress' do
+      done_game = create(:game, :finished)
+      in_progress = create(:game, :started)
+      pending = create(:game)
 
-    expect(page).to have_content 'Welcome'
-    expect(current_path).to eq new_session_path
+      expect(Game.in_progress).to eq [ in_progress ]
+    end
   end
-
-  it 'starts a game when enough players join'
-  it 'allows creating a game'
 end

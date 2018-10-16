@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :require_authentication
+  helper_method :current_user
 
   def require_authentication
     unless session[:current_user] && current_user
@@ -11,4 +12,6 @@ class ApplicationController < ActionController::Base
   def current_user
     @current_user ||= User.find session[:current_user]
   end
+
+
 end

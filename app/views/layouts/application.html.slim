@@ -7,6 +7,18 @@ html
     = csp_meta_tag
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    script src="https://js.pusher.com/4.3/pusher.min.js"
+    javascript:
+      // Enable pusher logging - don't include this in production
+      Pusher.logToConsole = true;
+      var pusher = new Pusher('03a04c4a34a3b4645a8b', {
+        cluster: 'us2',
+        forceTLS: true
+      });
+      var channel = pusher.subscribe('my-channel');
+      channel.bind('my-event', function(data) {
+        window.location.reload();
+      });
   body
     .container
       - flash.each do |message_type, message|

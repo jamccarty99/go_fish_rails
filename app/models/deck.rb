@@ -6,12 +6,12 @@ class Deck
   RANK = %w[2 3 4 5 6 7 8 9 10 Jack Queen King Ace]
   SUIT = %w[Clubs Diamonds Hearts Spades]
 
-  def initialize
-    @deck = start
+  def initialize(deck: Deck.create_deck)
+    @deck = deck
   end
 
-  def start
-    RANK.map { |rank| SUIT.map { |suit| PlayingCard.new(rank, suit) } }.flatten
+  def self.create_deck
+    RANK.flat_map { |rank| SUIT.map { |suit| PlayingCard.new(rank, suit) } }
   end
 
   def deal(deck = @deck)
@@ -34,4 +34,13 @@ class Deck
     shuffled = deck.shuffle
     shuffled.collect(&:to_s)
   end
+
+  def as_json
+    { 'deck' => deck.map(&:as_json) }
+  end
+
+  def self.from_json(deck_json)
+    Deck.new(deck: PlayingCard.collection_from_data(deck_json['deck']))
+  end
+
 end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe 'PlayingCard' do
+RSpec.describe 'PlayingCard', type: :model do
   let(:card) { PlayingCard.new('Ace', 'Spades') }
 
   it 'returns rank' do
@@ -13,5 +13,20 @@ RSpec.describe 'PlayingCard' do
 
   it 'returns value' do
     expect(card.value).to eq 13
+  end
+
+  describe 'json conversion' do
+    let(:json_data) { card.as_json }
+    let(:expanded_json) { PlayingCard.from_json(json_data) }
+
+    it 'returns a json object of card' do
+      expect(json_data['rank']).to eq('Ace')
+      expect(json_data['suit']).to eq('Spades')
+    end
+
+    it 'changes the json card object back into card' do
+      expect(expanded_json.rank).to eq('Ace')
+      expect(expanded_json.suit).to eq('Spades')
+    end
   end
 end

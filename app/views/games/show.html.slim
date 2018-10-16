@@ -1,0 +1,8 @@
+- current_player = 'Player 1'
+- if @game.pending?
+  .container.flex_column
+    h1.waiting__box Waiting for one more player to join the Game...
+    = image_tag("timer_icon.png", alt:("waiting timer icon"))
+- else
+  .container.flex_column
+    h1 "It is #{current_player}'s turn"

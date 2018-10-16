@@ -12,4 +12,8 @@ class StaticPagesController < ApplicationController
 
   def waiting
   end
+
+  def Leaderboard
+  end
+  
 end

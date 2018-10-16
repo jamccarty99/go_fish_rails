@@ -17,7 +17,7 @@ class UsersController < ApplicationController
     if @user.save
       session[:current_user] = @user.id
       session[:user_name] = @user.name
-      redirect_to sessions_path, notice: 'Welcome to the Go Fish!'
+      redirect_to sessions_path, notice: 'Welcome to Go Fish!'
     else
       flash.now[:alert] = 'Please correctly fill in the fields'
       render :new

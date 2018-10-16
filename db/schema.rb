@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_10_203848) do
+ActiveRecord::Schema.define(version: 2018_10_15_150418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,12 +18,19 @@ ActiveRecord::Schema.define(version: 2018_10_10_203848) do
   create_table "game_users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "game_id"
+    t.bigint "user_id"
+    t.index ["game_id"], name: "index_game_users_on_game_id"
+    t.index ["user_id"], name: "index_game_users_on_user_id"
   end
 
   create_table "games", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "game_size"
+    t.datetime "started_at"
+    t.jsonb "data"
+    t.datetime "finished_at"
   end
 
   create_table "users", force: :cascade do |t|
@@ -34,4 +41,6 @@ ActiveRecord::Schema.define(version: 2018_10_10_203848) do
     t.index ["name"], name: "index_users_on_name"
   end
 
+  add_foreign_key "game_users", "games"
+  add_foreign_key "game_users", "users"
 end
