@@ -1,65 +1,92 @@
 class Player
-  attr_accessor :hand, :sets
-  attr_reader   :name
+  attr_reader :name
 
   def initialize(name, hand = [], sets = [])
     @name = name
-    @hand = []
-    @sets = []
+    @hand = hand
+    @sets = sets
   end
 
-  def hand_length
-    hand.length
+  def hand_count
+    hand.count
   end
 
   def sets_count
-    sets.length
+    sets.count
   end
 
-  def have_any?(rank)
-    hand.flatten!
-    hand.sort! { |a, b| a.rank <=> b.rank }
-    hand.any? { |card| card.rank == rank }
+  def add_cards(cards)
+    cards.is_a?(Array) ? hand.concat(cards) : hand.push(cards)
   end
 
-  def add_cards(*cards)
-    single_rank = cards[0].rank
-    self.hand.push(cards)
-    check_for_sets(single_rank)
+  def check_for_sets
+    ranks_in_hand.each{ |rank| make_a_set(rank) if rank_count(rank) == 4 }
   end
 
-  def check_for_sets(card_rank)
-    if have_any?(card_rank)
-      matching_cards = hand.select { |card| card.rank == card_rank }
-      if matching_cards.length == 4
-        hand.reject! { |card| card.rank == card_rank }
-        sets.push(matching_cards)
-      end
-    end
+  def has_any?(rank)
+    ranks_in_hand.any?(rank)
   end
 
-  def give_cards(receiver, rank)
-    cards = hand.select { |card| card.rank == rank }
-    hand.reject! { |card| card.rank == rank }
-    receiver.add_cards(*cards)
-    @message = "#{receiver.name} received #{cards.length} #{rank}/s!"
+  def give_cards(rank)
+    gift = hand.select{ |card| card.rank == rank }
+    hand.reject!{ |card| card.rank == rank }
+    gift
+  end
+
+  def empty?
+    hand.empty?
+  end
+
+  def sets_value
+    total_value = sets.map{ |rank| PlayingCard.value(rank) }.reduce(:+)
+  end
+
+  def highest_value
+    value_array = sets.map{|rank| PlayingCard.value(rank)}
+    value_array.max
   end
 
   def as_json
     {
       'name' => name,
       'hand' => hand.map(&:as_json),
-      'sets' => sets.map{ |set| set.map(&:as_json) }
+      'sets' => sets
     }
   end
 
   def self.from_json(player_json)
     Player.new(
       player_json['name'],
-      hand: PlayingCard.collection_from_data(player_json['hand']),
-      sets: player_json['sets'].map{ |set|
-        PlayingCard.collection_from_data(set)
-      }
+      PlayingCard.collection_from_data(player_json['hand']),
+      player_json['sets']
     )
   end
+
+  def self.collection_from_data(data)
+    data.map{ |player_data| Player.from_json(player_data)}
+  end
+
+  private
+
+  attr_reader :sets
+  attr_accessor :hand
+
+  def ranks_in_hand
+    hand.map(&:rank).uniq
+  end
+
+  def rank_count(rank)
+    hand.map(&:rank).length
+  end
+
+  def make_a_set(rank)
+    sets.push(rank)
+    hand.reject!{ |card| card.rank == rank }
+  end
+
+  def sort_cards
+    hand.sort! { |a, b| a.value <=> b.value }
+  end
+
+
 end

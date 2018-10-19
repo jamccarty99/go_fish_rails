@@ -1,12 +1,11 @@
 require_relative 'playing_card'
 
-class Deck
-  attr_reader :deck
+class CardDeck
 
   RANK = %w[2 3 4 5 6 7 8 9 10 Jack Queen King Ace]
   SUIT = %w[Clubs Diamonds Hearts Spades]
 
-  def initialize(deck: Deck.create_deck)
+  def initialize(deck = CardDeck.create_deck)
     @deck = deck
   end
 
@@ -14,25 +13,20 @@ class Deck
     RANK.flat_map { |rank| SUIT.map { |suit| PlayingCard.new(rank, suit) } }
   end
 
-  def deal(deck = @deck)
-    deck.shift
+  def deal
+    deck.pop
   end
 
   def shuffle
-    deck.shuffle
+    deck.shuffle!
   end
 
-  def cards_left(deck)
+  def cards_left(deck = deck)
     deck.length
   end
 
-  def ordered_deck
-    deck.collect(&:to_s)
-  end
-
-  def shuffled_deck
-    shuffled = deck.shuffle
-    shuffled.collect(&:to_s)
+  def empty?
+    deck.empty?
   end
 
   def as_json
@@ -40,7 +34,11 @@ class Deck
   end
 
   def self.from_json(deck_json)
-    Deck.new(deck: PlayingCard.collection_from_data(deck_json['deck']))
+    CardDeck.new(PlayingCard.collection_from_data(deck_json['deck']))
   end
+
+  private
+
+  attr_accessor :deck
 
 end

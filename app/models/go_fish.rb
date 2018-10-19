@@ -1,133 +1,123 @@
 class GoFish
-  attr_accessor :players, :current_player, :message, :go_fish_toggle
-  attr_reader :deck, :clients
-  def initialize(clients = [])
-    @clients = clients
-    @players = []
-    @deck = Deck.new.shuffle
-    @current_player = nil
-    @message = ''
-    @go_fish_toggle = false
+  attr_reader :players, :round
+
+  def initialize(players = [], deck = CardDeck.new, round = 0)
+    @players = players
+    @deck = deck
+    @round = round
   end
 
-  def add_player(player)
-    clients.push(player)
+  def add_player(name)
+    players.push(Player.new(name))
+  end
+
+  def fill_game_with_bots(game_size)
+    number_of_bots = game_size - players.count
+ # TODO wait till later to fill in
   end
 
   def start
-    create_players(clients)
-    size_of_game(players)
-    deal_hand(@num)
+    deck.shuffle
+    distribute_cards
   end
 
-  def create_players(clients = [])
-    clients.each do |player|
-      players.push(Player.new(player))
-    end
+  def current_player
+    players[round % players.count]
   end
 
-  def size_of_game(players = [])
-    @num = 7
-    if players.length < 4
-      @num = 7
-    elsif players.length >= 4
-      @num = 5
-    end
+  def next_player
+    self.round = round + 1
+    go_fishing if current_player.empty?
   end
 
-  def deal_hand(num = 7)
-    1.upto(num) do
-      players.each do |player|
-        player.hand.push(deal(deck))
-      end
-    end
+  def find_player(player_name)
+    players.find{ |player| player.name == player_name }
   end
 
-  def deal(deck = @deck)
-    deck.shift
-  end
+  def play_round(player_name, rank)
+    return if winner
 
-  def play_round(rank, player)
-    next_players_turn
-    play_turn(rank, player)
-    results_string = ''
-    players.each do |i|
-      results_string << "#{i.name} has #{i.hand_length} cards in hand and #{i.sets.length} sets "
-    end
-    results_string
-  end
-
-  def play_turn(rank, player)
-    request_cards(rank, player) until message == 'Go Fish!'
-    go_fish
-  end
-
-  def request_cards(rank, player)
-    if player.have_any?(rank)
-      player.give_cards(current_player, rank)
-    else
-      @go_fish_toggle = true
-      @message = 'Go Fish!'
-    end
-  end
-
-  def go_fish
-    if !deck.empty?
-      current_player.add_cards(deal)
-      @go_fish_toggle = false
-      @message = "#{current_player.name} went fishing!"
-      # next_players_turn
-    else
-      next_players_turn
-      @go_fish_toggle = false
-      @message = "There are no more fish to catch:(\n It is #{current_player.name}'s turn."
-    end
-  # next_players_turn
-  end
-
-  def next_players_turn
-    self.current_player = (current_player.nil? ? players[0] : players[turn_index])
-    @message = "It is #{current_player.name}'s turn. Select a player, then a card to ask for."
-    self.current_player
-  end
-
-  def turn_index
-    last_index = (players.length - 1)
-    if players.index(current_player) < last_index
-      (players.index(current_player) + 1)
-    elsif players.index(current_player) == last_index
-      0
-    end
-  end
-
-  def sets_total
-    total_sets = 0
-    players.each { |player| total_sets = (total_sets + player.sets.length) }
-    total_sets
-  end
-
-  def most_sets
-    players.max_by do |player|
-      player.sets.length
-    end
-  end
-
-  def winner
-    @message = "Winner: #{most_sets.name}" if sets_total == 13
+    player = find_player(player_name)
+    player.has_any?(rank) ? card_transfer(player, rank) : go_fishing
+    go_fishing if current_player.empty?
   end
 
   def as_json
     {
       'players' => players.map(&:as_json),
-      'deck' => deck.map(&:as_json),
-      'current_player' => 
+      'deck' => deck.as_json,
+      'round' => round
     }
   end
 
-  def self.from_json
+  def self.from_json(go_fish_json)
+    GoFish.new(
+      Player.collection_from_data(go_fish_json['players']),
+      CardDeck.from_json(go_fish_json['deck']),
+      go_fish_json['round']
+    )
   end
 
-  private
+  def winner
+    return unless game_over?
 
-  attr_writer :deck
+    draw? ? tie_breaker_winner : players.max_by(&:sets_count)
+  end
+
+private
+
+attr_writer :players, :round
+attr_reader :deck
+
+  def game_over?
+    total_sets = players.map(&:sets_count).reduce(:+)
+    total_sets == 13
+  end
+
+  def distribute_cards
+    starting_hand = players.count > 3 ? 5 : 7
+    starting_hand.times do
+      players.each{ |player| player.add_cards(deck.deal) }
+    end
+  end
+
+  def card_transfer(player, rank)
+    current_player.add_cards(player.give_cards(rank))
+  end
+
+  def go_fishing
+    return if winner
+
+    current_player.add_cards(deck.deal) unless deck.empty?
+    next_player
+  end
+
+  def highest_set_count
+    players.max_by(&:sets_count).sets_count
+  end
+
+  def highest_set_count_players
+    players.select{ |player| player.sets_count == highest_set_count }
+  end
+
+  def draw?
+    highest_set_count_players.count > 1
+  end
+
+  def highest_set_value
+    highest_set_count_players.max_by(&:sets_value).sets_value
+  end
+
+  def double_draw?
+    values = players.map(&:sets_value)
+    values.count{ |value| value == highest_set_value } > 1
+  end
+
+  def tie_breaker_winner
+    if double_draw?
+      highest_set_count_players.max_by(&:highest_value)
+    else
+      highest_set_count_players.max_by(&:sets_value)
+    end
+  end
 end

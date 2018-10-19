@@ -26,6 +26,10 @@ class PlayingCard
     "#{suit[0].downcase}#{rank[0].downcase}"
   end
 
+  def self.value(rank)
+    VALUES[rank]
+  end
+
   def value
     VALUES[rank]
   end

@@ -89,11 +89,13 @@ RSpec.describe 'Games', type: :system do
       expect(session1).to have_content 'Waiting for one more player to join the Game...'
     end
 
-    xit 'lets the current_player make an initial request' do
+    it 'lets the current_player make an initial request' do
       session1.click_on '2 Player'
       session2.click_on '2 Player'
       session1.driver.refresh
-
+      session1.click_on 'asked_player'
+      session1.click_on 'asked_card'
+      expect()
     end
 
     # def signin

@@ -1,102 +1,163 @@
-require "rails_helper"
+require "spec_helper"
+require "./app/models/player"
+require "./app/models/playing_card"
 
 RSpec.describe 'Player', type: :model do
-  let(:player) { Player.new('Joey') }
-  let(:roy) { Player.new('Roy') }
-  let(:go_fish) { GoFish.new(%w[player1 player2]) }
+  let(:joey) { Player.new('Joey') }
+  let(:joey_json) { joey.as_json }
+  let(:inflated_joey) { Player.from_json(joey_json) }
   let(:card) { PlayingCard.new('Queen', 'Spades') }
-  let(:player2_card) { PlayingCard.new('4', 'Hearts') }
-  let(:set) { [PlayingCard.new('Queen', 'Spades'), PlayingCard.new('Queen', 'Clubs'), PlayingCard.new('Queen', 'Hearts'), PlayingCard.new('Queen', 'Diamonds')]}
-  let(:almost_set) { [PlayingCard.new('Queen', 'Clubs'), PlayingCard.new('Queen', 'Hearts'), PlayingCard.new('Queen', 'Diamonds')]}
-  let(:deck_of_2) { [PlayingCard.new('Queen', 'Spades'), PlayingCard.new('4', 'Spades') ] }
+  let(:card2) { PlayingCard.new('4', 'Hearts') }
+  let(:set) {[
+    PlayingCard.new('Queen', 'Spades'),
+    PlayingCard.new('Queen', 'Clubs'),
+    PlayingCard.new('Queen', 'Hearts'),
+    PlayingCard.new('Queen', 'Diamonds')
+  ]}
 
-  describe 'initialize' do
-    it 'Should contain a name' do
-      expect(player.name).to eq 'Joey'
-    end
-
-    it 'Should contain an array for players hand' do
-      expect(player.hand).to eq []
-    end
-
-    it 'Should contain an array for the players sets' do
-      expect(player.sets).to eq []
-      player.sets.push(set)
-      expect(player.sets.length).to eq 1
+  describe '#initialize' do
+    it 'should have correct attributes' do
+      expect(joey.name).to eq 'Joey'
+      expect(joey.send(:hand).is_a?(Array)).to be true
+      expect(joey.send(:sets).is_a?(Array)).to be true
     end
   end
 
-  describe 'hand_length' do
-    it 'Should give the length of hand array' do
-      go_fish.start
-      expect(player.hand_length).to eq 0
-      player.hand.push(card)
-      expect(player.hand_length).to eq 1
+  describe '#add_cards' do
+    it 'should be able to add a single card' do
+      joey.add_cards(card)
+      expect(joey.hand_count).to be(1)
+    end
+
+    it 'should be able to add an array of cards' do
+      joey.add_cards(set)
+      expect(joey.hand_count).to be(4)
+    end
+
+    describe '#ranks_in_hand' do
+      it ('should only show what ranks in hand') do
+        joey.add_cards(set)
+        expect(joey.send(:ranks_in_hand)).to eq([set[0].rank])
+      end
+    end
+
+    describe '#rank_count' do
+      it('should be able to count how many cards of the same rank') do
+        joey.add_cards(set)
+        expect(joey.send(:rank_count, set[0].rank)).to eq(4)
+      end
+    end
+
+    describe '#make_a_set' do
+      it('should make a set when the player have a set') do
+        joey.add_cards(set)
+        joey.send(:make_a_set, set[0].rank)
+        expect(joey.sets_count).to be(1)
+      end
+
+      it('should remove cards in hand after making a set') do
+        joey.add_cards(set)
+        joey.send(:make_a_set, 'Queen')
+        expect(joey.hand_count).to be(0)
+      end
+    end
+
+    describe '#check_for_sets' do
+      it('check if there are any sets in hand') do
+        joey.add_cards(set)
+        joey.check_for_sets
+        expect(joey.sets_count).to be(1)
+        expect(joey.hand_count).to be(0)
+      end
+    end
+
+    describe '#has_any?' do
+      it('checks if player have the rank requested') do
+        joey.add_cards(card)
+        expect(joey.has_any?(card.rank)).to be(true)
+        expect(joey.has_any?('2')).to be (false)
+      end
+    end
+
+    describe '#sets_value' do
+      it('returns the total value of all the sets for the player') do
+        joey.add_cards(set)
+        joey.send(:make_a_set, 'Queen')
+        joey.add_cards(set)
+        joey.send(:make_a_set, 'Queen')
+        expect(joey.sets_value).to be(22)
+      end
+    end
+
+    describe '#highest_value' do
+      it('returns the value of the highest ranked set') do
+        joey.add_cards(set)
+        joey.send(:make_a_set, 'Queen')
+        joey.add_cards(set)
+        joey.send(:make_a_set, 'King')
+        expect(joey.highest_value).to be(12)
+      end
+    end
+
+    describe('#give_cards') do
+      it 'returns an array of card(s)' do
+        joey.add_cards(card)
+        result = joey.give_cards(card.rank)
+        expect(result.is_a?(Array)).to be(true)
+      end
+
+      it 'returns the requested card(s)' do
+        joey.add_cards([card,card2])
+        result = joey.give_cards(card.rank)
+        expect(result[0].rank).to eq(card.rank)
+      end
+
+      it 'removes the requested card(s) from hand' do
+        joey.add_cards([card,card2])
+        joey.give_cards(card.rank)
+        expect(joey.hand_count).to eq(1)
+      end
+    end
+
+    describe('#sort_cards') do
+      it('sorts cards in order of rank')do
+        joey.add_cards([card,card2])
+        joey.send(:sort_cards)
+        expect(joey.send(:hand)[0].rank).to eq(card2.rank)
+      end
+    end
+
+    describe('#empty?') do
+      it'return true if hand is empty' do
+        expect(joey.empty?).to be(true)
+        joey.add_cards(set)
+        expect(joey.empty?).to be(false)
+      end
     end
   end
 
-  describe 'have_any?' do
-    it 'Should search players hand for the card requested and return boolean' do
-      player.hand.push(card)
-      expect(player.have_any?('Queen')).to eq true
-    end
-    it 'Should search players hand for the card requested and return boolean' do
-      player.hand.push(player2_card)
-      expect(player.have_any?('Queen')).to eq false
-    end
-  end
-
-  describe 'add_cards' do
-    it 'adds a card to the players hand' do
-      expect(player.hand).to eq []
-      expect { player.add_cards(card) }.to change { player.hand_length }.by(1)
-      expect(player.hand[0].rank).to match(/Queen/)
+  describe '#as_json' do
+    it('converts data into hash') do
+      expect(joey_json['name']).to eq(joey.name)
+      expect(joey_json['hand'].is_a?(Array)).to be true
     end
 
-    it 'checks for sets' do
-      player.hand.push(almost_set)
-      player.add_cards(card)
-      expect(player.hand_length).to eq 0
+    it("json's hand array have card data") do
+      joey.add_cards(card)
+      expect(joey_json['hand'][0]['rank']).to eq(card.rank)
     end
   end
 
-  describe 'give_cards' do
-    it 'Should remove card from current players hand and give to the other' do
-      player.hand.push(card, player2_card)
-      expect { player.give_cards(roy, 'Queen') }.to change { player.hand_length }.by(-1)
-      player.hand.push(card)
-      expect { player.give_cards(roy, 'Queen') }.to change { roy.hand_length }.by(1)
-    end
-  end
-
-  describe 'check_for_sets' do
-    it 'Checks for sets of four cards with matching rank and removes from hand' do
-      player.hand.push(set)
-      player.hand.flatten!
-      expect { player.check_for_sets('Queen') }.to change { player.hand_length }.by(-4)
+  describe '#from_json' do
+    it('inflated player have the correct attribute and methods') do
+      expect(inflated_joey.name).to eq(joey.name)
     end
 
-    it 'Then moves them set of cards to the sets array' do
-      player.hand.push(set)
-      player.hand.flatten!
-      expect { player.check_for_sets('Queen') }.to change { player.sets.length }.by(1)
-    end
-  end
-
-  describe 'json conversion' do
-    let(:card) { PlayingCard.new('Ace', 'Spades') }
-    let(:deck) { Deck.new }
-    let(:player) { Player.new('Player 1') }
-    let(:player_json) { player.as_json }
-
-    it 'returns a json object of player' do
-      player.hand.push(deck)
-      player.sets.push([card]).push([card])
-      expect(player_json).to be_a Hash
-    end
-
-    it 'changes the json player object back into a player' do
-      expect(Player.from_json(player_json)).to be_an_instance_of Player
+    it('inflated player can have cards with playing card class') do
+      joey.add_cards(card)
+      expect(inflated_joey.empty?).to be false
+      expect(inflated_joey.has_any?(card.rank)).to be true
+      expect(inflated_joey.send(:hand)[0]).to be_an_instance_of(PlayingCard)
     end
   end
 end
